@@ -1,6 +1,6 @@
 # 🚀 WanAndroid_Java
 
-Java语言编写的基于经典的 **MVP (Model-View-Presenter)** 架构，从零开始搭建的 [玩Android](https://www.wanandroid.com/) 第三方客户端。本项目旨在作为 Android 架构学习、主流第三方库接入以及全流程闭环开发的实战模板。
+Java语言编写的基于经典的 **MVP (Model-View-Presenter)** 架构，从零开始搭建的 [WanAndroid](https://www.wanandroid.com/) 第三方客户端。本项目旨在作为 Android 架构学习、主流第三方库接入以及全流程闭环开发的实战模板。
 
 ## ✨ Features
 
