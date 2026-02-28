@@ -27,9 +27,9 @@ Java语言编写的基于经典的 **MVP (Model-View-Presenter)** 架构，从�
 
 | 首页 (Home) | 体系分类 (Knowledge Tree) | 项目列表 (Projects) |
 |:---:|:---:|:---:|
-| <img src="/pic/home.png" width="250"/> | <img src="/pic/tree.png" width="250"/> | <img src="/pic/project.png" width="250"/> |
+| <img src="/pic/home.jpg" width="250"/> | <img src="/pic/tree.jpg" width="250"/> | <img src="/pic/project.jpg" width="250"/> |
 | **搜索热词 (Search)** | **个人中心 (Profile)** | **积分排行榜 (Rank)** |
-| <img src="/pic/search.png" width="250"/> | <img src="/pic/profile.png" width="250"/> | <img src="/pic/rank.png" width="250"/> |
+| <img src="/pic/search.jpg" width="250"/> | <img src="/pic/profile.jpg" width="250"/> | <img src="/pic/rank.jpg" width="250"/> |
 
 ## 📂 Modules
 
