@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
@@ -106,6 +107,33 @@ public class HomeFragment extends BaseFragment<HomePresenter, FragmentHomeBindin
         // 点击跳转到搜索页
         binding.ivSearch.setOnClickListener(v -> {
             startActivity(new Intent(getContext(), com.example.wanandroid.ui.search.SearchActivity.class));
+        });
+        // 监听 RecyclerView 的滑动
+        binding.rvHome.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                // 获取当前的 LayoutManager
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                if (layoutManager != null) {
+                    // 获取屏幕上看到的第一个 Item 的位置
+                    int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                    // 当向下滑动超过第 5 个 Item 时，显示按钮
+                    if (firstVisibleItemPosition > 5) {
+                        // fab.show() 自带漂亮的缩放放大动画
+                        binding.fabTop.show();
+                    } else {
+                        // 回到顶部附近时，隐藏按钮 (自带缩放缩小动画)
+                        binding.fabTop.hide();
+                    }
+                }
+            }
+        });
+        binding.fabTop.setOnClickListener(v -> {
+            // smoothScrollToPosition 会带有平滑滚动的动画效果
+            binding.rvHome.smoothScrollToPosition(0);
         });
     }
 

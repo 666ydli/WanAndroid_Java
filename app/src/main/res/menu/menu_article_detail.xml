@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- 分享按钮，设置 showAsAction="always" 让它一直显示在 Toolbar 上 -->
+    <item
+        android:id="@+id/action_share"
+        android:icon="@android:drawable/ic_menu_share"
+        android:title="分享"
+        app:showAsAction="always" />
+
+    <!-- 浏览器打开按钮，设置 showAsAction="never" 让它折叠在右上角的三个点里 -->
+    <item
+        android:id="@+id/action_browser"
+        android:title="在浏览器中打开"
+        app:showAsAction="never" />
+
+</menu>

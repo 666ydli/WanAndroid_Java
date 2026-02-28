@@ -1,12 +1,14 @@
 package com.example.wanandroid.ui.collect;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wanandroid.base.BaseActivity;
+import com.example.wanandroid.common.CollectEvent;
 import com.example.wanandroid.data.bean.Article;
 import com.example.wanandroid.databinding.ActivityCollectBinding;
 import com.example.wanandroid.ui.ArticleDetailActivity;
@@ -14,12 +16,14 @@ import com.example.wanandroid.ui.home.HomeAdapter;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnRefreshLoadMoreListener;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 
 public class CollectActivity extends BaseActivity<CollectPresenter, ActivityCollectBinding> implements CollectContract.View {
 
     private HomeAdapter mAdapter;
-    private int curPage = 0;
+    private int curPage = 0; // 收藏列表接口页码从 0 开始
 
     @Override
     protected ActivityCollectBinding getViewBinding() {
@@ -33,17 +37,18 @@ public class CollectActivity extends BaseActivity<CollectPresenter, ActivityColl
 
     @Override
     protected void initView() {
-        // 配置 Toolbar 左上角返回键
+        // 1. 配置 Toolbar
         setSupportActionBar(binding.toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        // 2. 初始化 RecyclerView 和 Adapter
         binding.rvCollect.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new HomeAdapter();
         binding.rvCollect.setAdapter(mAdapter);
 
-        // 设置点击事件
+        // 3. 正常点击事件 (点击卡片看文章，点击红心取消收藏)
         mAdapter.setOnItemClickListener(new HomeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Article article) {
@@ -55,16 +60,38 @@ public class CollectActivity extends BaseActivity<CollectPresenter, ActivityColl
 
             @Override
             public void onCollectClick(int position, int articleId, boolean isCollect) {
-                // 在收藏列表中，点击红心一定是“取消收藏”
-                // 注意获取 originId 和 id 的区别
+                // 点击红心取消收藏
                 Article article = mAdapter.getData().get(position);
-                int originId = article.getOriginId() != 0 ? article.getOriginId() : -1;
-
-                // 发起取消收藏请求 (传入收藏记录id, 原文章id, 位置)
+                int originId = article.getOriginId() != 0 ? article.getOriginId() : article.getId();
                 mPresenter.uncollect(article.getId(), originId, position);
             }
         });
 
+        // ================= 4. [高阶UI交互] 侧滑删除功能 =================
+        ItemTouchHelper.SimpleCallback swipeCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false; // 不需要上下拖拽排序
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                // 滑动到底松手时触发
+                int position = viewHolder.getAdapterPosition();
+                Article article = mAdapter.getData().get(position);
+                int originId = article.getOriginId() != 0 ? article.getOriginId() : article.getId();
+
+                // 发起取消收藏网络请求
+                if (mPresenter != null) {
+                    mPresenter.uncollect(article.getId(), originId, position);
+                }
+            }
+        };
+        // 绑定到当前的 RecyclerView 上
+        new ItemTouchHelper(swipeCallback).attachToRecyclerView(binding.rvCollect);
+        // =========================================================
+
+        // 5. 配置下拉刷新和上拉加载
         binding.refreshLayout.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
@@ -81,7 +108,7 @@ public class CollectActivity extends BaseActivity<CollectPresenter, ActivityColl
 
     @Override
     protected void initData() {
-        // 为了让收藏列表里的红心默认是亮起的，我们在获取数据后，手动把状态设为 true
+        // 进入页面自动刷新请求数据
         binding.refreshLayout.autoRefresh();
     }
 
@@ -95,15 +122,14 @@ public class CollectActivity extends BaseActivity<CollectPresenter, ActivityColl
         return super.onOptionsItemSelected(item);
     }
 
-    // --- 接口实现 ---
+    // ================= Contract.View 回调实现 =================
 
     @Override
     public void showCollectList(List<Article> articles) {
         binding.refreshLayout.finishRefresh();
         binding.refreshLayout.finishLoadMore();
 
-        // 收藏列表接口返回的数据里，collect 字段默认可能不是 true
-        // 为了 UI 显示正确，我们手动将其设为 true
+        // 服务器返回的收藏列表可能没有默认 collect 字段，手动设为 true 让红心亮起
         for (Article article : articles) {
             article.setCollect(true);
         }
@@ -126,24 +152,23 @@ public class CollectActivity extends BaseActivity<CollectPresenter, ActivityColl
     public void showUncollectSuccess(int position) {
         showToast("已取消收藏");
 
-        // 1. 获取这篇被取消的文章的原ID (必须在 remove 之前获取！)
+        // 1. 务必在 remove 前获取文章的原 ID
         Article article = mAdapter.getData().get(position);
-        // 在“我的收藏”中，真实的首页文章ID存在 originId 中
         int originId = article.getOriginId() != 0 ? article.getOriginId() : article.getId();
 
-        // 2. 从当前列表中移除
+        // 2. 从列表中移除并播放动画
         mAdapter.getData().remove(position);
         mAdapter.notifyItemRemoved(position);
         mAdapter.notifyItemRangeChanged(position, mAdapter.getData().size() - position);
 
-        // 3. [修改这里] 携带具体的文章ID和最新状态(false)发送事件
-        org.greenrobot.eventbus.EventBus.getDefault().post(new com.example.wanandroid.common.CollectEvent(originId, false));
+        // 3. 通知首页进行局部刷新状态同步
+        EventBus.getDefault().post(new CollectEvent(originId, false));
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void showUncollectFail(String errorMsg) {
         showToast("操作失败: " + errorMsg);
-        mAdapter.notifyDataSetChanged(); // 失败则把红心恢复
+        // 如果断网或失败，notifyDataSetChanged 能让刚才被划出屏幕的卡片“瞬间弹回原位”！
+        mAdapter.notifyDataSetChanged();
     }
 }

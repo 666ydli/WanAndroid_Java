@@ -54,6 +54,46 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- 1. 搜索历史区域 -->
+            <LinearLayout
+                android:id="@+id/layout_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp"
+                android:visibility="gone"> <!-- 默认隐藏，有数据时才显示 -->
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="搜索历史"
+                        android:textColor="#333333"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_clear_history"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:padding="4dp"
+                        android:text="清空"
+                        android:textColor="#999999"
+                        android:textSize="12sp" />
+                </RelativeLayout>
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/flexbox_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:flexWrap="wrap" />
+            </LinearLayout>
+
+            <!-- 2. 大家都在搜 (原有的热词区域) -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -61,7 +101,6 @@
                 android:textColor="#333333"
                 android:textStyle="bold" />
 
-            <!-- Flexbox 流式布局 -->
             <com.google.android.flexbox.FlexboxLayout
                 android:id="@+id/flexbox_hot"
                 android:layout_width="match_parent"
