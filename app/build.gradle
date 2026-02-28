@@ -1,0 +1,76 @@
+plugins {
+    alias(libs.plugins.android.application)
+}
+
+android {
+    namespace 'com.example.wanandroid'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "com.example.wanandroid"
+        minSdk 24
+        targetSdk 36
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+
+    // 基础 UI 库
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // --- 网络请求三件套 ---
+    // 1. Retrofit: 封装网络请求接口
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    // 2. Gson Converter: 将 JSON 自动转为 Java 对象
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    // 3. RxJava Adapter: 让 Retrofit 支持 RxJava
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.9.0'
+
+    // --- 异步处理 ---
+    // RxJava & RxAndroid: 强大的链式异步编程
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.21'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+
+    // --- 网络底层 ---
+    // OkHttp: Retrofit 底层依赖它，这里引入拦截器用于打印日志
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+
+    // --- 图片加载 ---
+    // Glide: 谷歌推荐的图片加载库
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+
+    // --- UI 组件 ---
+    // Banner: 首页轮播图
+    implementation 'io.github.youth5201314:banner:2.2.2'
+    // SmartRefreshLayout: 下拉刷新和上拉加载更多 (国内最强刷新库)
+    implementation 'io.github.scwang90:refresh-layout-kernel:2.0.6'
+    implementation 'io.github.scwang90:refresh-header-classics:2.0.6'
+    // AgentWeb: 强大的 WebView 封装库
+    implementation 'com.github.Justson.AgentWeb:agentweb-core:v4.1.9-androidx'
+    // Cookie 持久化管理 (专为 OkHttp/Retrofit 设计)
+    implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
+    // EventBus 全局事件通信框架
+    implementation 'org.greenrobot:eventbus:3.3.1'
+    // Google 官方流式布局，用于标签展示
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
+}

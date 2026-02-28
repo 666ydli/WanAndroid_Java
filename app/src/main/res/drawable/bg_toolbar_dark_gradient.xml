@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 主体：深蓝紫渐变（不单调） -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="135"
+                android:startColor="#111827"
+                android:centerColor="#0B2A4A"
+                android:endColor="#1B1035"
+                android:type="linear" />
+        </shape>
+    </item>
+
+    <!-- 顶部高光：很淡的一条，让质感更“高级” -->
+    <item android:top="0dp" android:bottom="-1dp">
+        <shape android:shape="rectangle">
+            <size android:height="1dp" />
+            <solid android:color="#33FFFFFF" />
+        </shape>
+    </item>
+
+</layer-list>

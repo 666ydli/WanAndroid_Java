@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 主体：深蓝紫渐变（沉稳但不死黑） -->
+    <item>
+        <shape android:shape="oval">
+            <gradient
+                android:angle="135"
+                android:startColor="#0F172A"
+                android:centerColor="#0B2A4A"
+                android:endColor="#1B1035"
+                android:type="linear" />
+        </shape>
+    </item>
+
+    <!-- 顶部高光：让头像更“立体” -->
+    <item android:left="6dp" android:top="6dp" android:right="6dp" android:bottom="10dp">
+        <shape android:shape="oval">
+            <gradient
+                android:angle="270"
+                android:startColor="#26FFFFFF"
+                android:endColor="#00FFFFFF"
+                android:type="linear" />
+        </shape>
+    </item>
+
+    <!-- 外圈轻描边：更精致 -->
+    <item>
+        <shape android:shape="oval">
+            <stroke
+                android:width="1dp"
+                android:color="#1AFFFFFF" />
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
+
+</layer-list>
